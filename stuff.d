@@ -23,11 +23,11 @@ struct Mutex(T) {
 
         alias payload this;
 
-        T* payload() @trusted {
+        scope T* payload() @trusted {
             return cast(T*)_payload;
         }
 
-        ~this() {
+        ~this() scope {
             _mutex.unlock_nothrow();
         }
     }
@@ -48,13 +48,13 @@ void main() {
     {
         scope i = s.lock();
         *i = 33;
-        writeln("i: ", *i);
+        () @trusted { writeln("i: ", *i); }();
     }
 
     auto tid = () @trusted { return spawn(&func, thisTid); }();
     () @trusted { tid.send(&s); }();
     () @trusted { receiveOnly!bool; }();
-    writeln("i is now ", *s.lock);
+    () @trusted { writeln("i is now ", *s.lock); }();
 }
 
 

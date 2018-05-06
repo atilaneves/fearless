@@ -2,9 +2,20 @@
 
 import std.concurrency: Tid;
 
+class MutexImpl {
+
+    void lock_nothrow() shared scope {
+
+    }
+
+    void unlock_nothrow() shared scope {
+
+    }
+}
+
 struct Mutex(T) {
 
-    import core.sync.mutex: MutexImpl = Mutex;
+    //import core.sync.mutex: MutexImpl = Mutex;
 
     private shared T _payload;
     private shared MutexImpl _mutex;

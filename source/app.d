@@ -28,6 +28,8 @@ void main() @safe {
 
     // Demonstrate sending to another thread
     () @trusted { // all the std.concurrency functions are @system
+        // Need to find a way here to stop sending it to another thread
+        // in the same scope as .lock() to avoid deadlocks.
         auto tid = spawn(&func, thisTid);
         tid.send(&s);
         receiveOnly!bool;
@@ -51,6 +53,8 @@ void func(Tid tid) @trusted { // Both receive and send are @system
 }
 
 
+// Shared instead of the original's Mutex since it might get confusing.
+// Then again, `shared Shared` isn't great either.
 struct Shared(T) {
 
     import core.sync.mutex: Mutex;

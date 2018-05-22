@@ -11,7 +11,7 @@ void main() @safe {
     auto s = shared Shared!int(42);
 
     {
-        scope i = s.lock();
+        auto i = s.lock();
         // writeln is @system for some reason
         () @trusted { writeln("i: ", *i); }();
         *i = 33;

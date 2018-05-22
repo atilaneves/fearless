@@ -68,7 +68,7 @@ struct Shared(T) {
     static struct Guard {
 
         private shared T* _payload;
-        private shared Mutex* _mutex;
+        private shared Mutex _mutex;
 
         alias payload this;
 
@@ -78,13 +78,13 @@ struct Shared(T) {
             return cast(T*) _payload;
         }
 
-        ~this() {
+        ~this() scope @trusted {
             _mutex.unlock_nothrow();
         }
     }
 
     auto lock() shared @trusted {
         _mutex.lock_nothrow;
-        return Guard(&_payload, &_mutex);
+        return Guard(&_payload, _mutex);
     }
 }

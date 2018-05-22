@@ -1,7 +1,7 @@
 import std.concurrency: Tid;
 
 // Can't use core.sync.mutex due to the member functions not being `scope`
-static struct MutexImpl {
+static struct Mutex {
 
     import core.sys.posix.pthread;
 
@@ -26,26 +26,26 @@ static struct MutexImpl {
     }
 }
 
-struct Mutex(T) {
+struct Shared(T) {
 
     // Can't use core.sync.mutex due to the member functions not being `scope`
-    //import core.sync.mutex: MutexImpl = Mutex;
+    //import core.sync.mutex: Mutex;
 
     private shared T _payload;
-    private shared MutexImpl _mutex;
+    private shared Mutex _mutex;
 
     this(A...)(auto ref A args) shared {
         import std.functional: forward;
 
-        //this._mutex = new shared MutexImpl();
-        this._mutex = shared MutexImpl(null /*attr*/);
+        //this._mutex = new shared Mutex();
+        this._mutex = shared Mutex(null /*attr*/);
         this._payload = T(forward!args);
     }
 
     static struct Guard {
 
         private shared T* _payload;
-        private shared MutexImpl* _mutex;
+        private shared Mutex* _mutex;
 
         alias payload this;
 
@@ -69,7 +69,7 @@ void main() @safe {
     import std.stdio;
     import std.concurrency: spawn, send, receiveOnly, thisTid;
 
-    auto s = shared Mutex!int(42);
+    auto s = shared Shared!int(42);
 
     {
         scope i = s.lock();
@@ -88,7 +88,7 @@ void func(Tid tid) @trusted {
     import std.concurrency: receive, send;
 
     receive(
-        (shared(Mutex!int)* m) {
+        (shared(Shared!int)* m) {
             auto i = m.lock;
             *i = ++*i;
         },

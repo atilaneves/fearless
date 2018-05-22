@@ -1,5 +1,9 @@
 import std.concurrency: Tid;
 
+
+int* gEvil;
+
+
 void main() @safe {
     import std.stdio: writeln;
     import std.concurrency: spawn, send, receiveOnly, thisTid;
@@ -12,6 +16,10 @@ void main() @safe {
         () @trusted { writeln("i: ", *i); }();
         *i = 33;
         () @trusted { writeln("i: ", *i); }();
+
+        static assert(!__traits(compiles, gEvil = i));
+        int* intPtr;
+        static assert(__traits(compiles, intPtr = i));
     }
 
     auto tid = () @trusted { return spawn(&func, thisTid); }();

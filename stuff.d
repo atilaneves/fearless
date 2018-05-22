@@ -31,8 +31,8 @@ struct Shared(T) {
     // Can't use core.sync.mutex due to the member functions not being `scope`
     //import core.sync.mutex: Mutex;
 
-    private shared T _payload;
-    private shared Mutex _mutex;
+    private T _payload;
+    private Mutex _mutex;
 
     this(A...)(auto ref A args) shared {
         import std.functional: forward;
@@ -66,7 +66,7 @@ struct Shared(T) {
 
 
 void main() @safe {
-    import std.stdio;
+    import std.stdio: writeln;
     import std.concurrency: spawn, send, receiveOnly, thisTid;
 
     auto s = shared Shared!int(42);
@@ -74,6 +74,9 @@ void main() @safe {
     {
         scope i = s.lock();
         *i = 33;
+        // writeln here is @system for some reason
+        () @trusted { writeln("i: ", *i); }();
+        (*i)++;
         () @trusted { writeln("i: ", *i); }();
     }
 
@@ -84,6 +87,7 @@ void main() @safe {
 }
 
 
+// Both receive and send are @system
 void func(Tid tid) @trusted {
     import std.concurrency: receive, send;
 

@@ -68,6 +68,11 @@ struct Shared(T) {
         this._payload = T(forward!args);
     }
 
+    auto lock() shared {
+        () @trusted { _mutex.lock_nothrow; }();
+        return Guard(&_payload, _mutex);
+    }
+
     // non-static didn't work - weird error messages
     static struct Guard {
 
@@ -85,10 +90,5 @@ struct Shared(T) {
         ~this() scope @trusted {
             _mutex.unlock_nothrow();
         }
-    }
-
-    auto lock() shared {
-        () @trusted { _mutex.lock_nothrow; }();
-        return Guard(&_payload, _mutex);
     }
 }

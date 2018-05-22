@@ -1,0 +1,6 @@
+name "caring"
+description "D version of Rust's std::sync::Mutex"
+authors "Atila Neves"
+copyright "Copyright © 2018, Atila Neves"
+license "boost"
+dflags "-dip25" "-dip1000"

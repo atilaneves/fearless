@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+caring.so
+caring.dylib
+caring.dll
+caring.a
+caring.lib
+caring-test-*
+*.exe
+*.o
+*.obj
+*.lst
+caring

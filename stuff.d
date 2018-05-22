@@ -1,20 +1,34 @@
-@safe:
-
 import std.concurrency: Tid;
 
-class MutexImpl {
+// Can't use core.sync.mutex due to the member functions not being `scope`
+static struct MutexImpl {
 
-    void lock_nothrow() shared scope {
+    import core.sys.posix.pthread;
 
+    private pthread_mutex_t _mutex;
+
+    @disable this();
+
+    this(pthread_mutexattr_t* attr) @trusted shared scope {
+        pthread_mutex_init(cast(pthread_mutex_t*)&_mutex, attr);
     }
 
-    void unlock_nothrow() shared scope {
+    ~this() @trusted scope {
+        pthread_mutex_destroy(cast(pthread_mutex_t*)&_mutex);
+    }
 
+    void lock_nothrow() shared scope nothrow {
+        pthread_mutex_lock(cast(pthread_mutex_t*)&_mutex);
+    }
+
+    void unlock_nothrow() shared scope nothrow {
+        pthread_mutex_unlock(cast(pthread_mutex_t*)&_mutex);
     }
 }
 
 struct Mutex(T) {
 
+    // Can't use core.sync.mutex due to the member functions not being `scope`
     //import core.sync.mutex: MutexImpl = Mutex;
 
     private shared T _payload;
@@ -23,14 +37,15 @@ struct Mutex(T) {
     this(A...)(auto ref A args) shared {
         import std.functional: forward;
 
-        this._mutex = new shared MutexImpl();
+        //this._mutex = new shared MutexImpl();
+        this._mutex = shared MutexImpl(null /*attr*/);
         this._payload = T(forward!args);
     }
 
     static struct Guard {
 
         private shared T* _payload;
-        private shared MutexImpl _mutex;
+        private shared MutexImpl* _mutex;
 
         alias payload this;
 
@@ -38,19 +53,19 @@ struct Mutex(T) {
             return cast(T*)_payload;
         }
 
-        ~this() scope {
+        ~this() scope @trusted  {
             _mutex.unlock_nothrow();
         }
     }
 
-    auto lock() shared {
+    auto lock() shared @trusted {
         _mutex.lock_nothrow;
-        return Guard(&_payload, _mutex);
+        return Guard(&_payload, &_mutex);
     }
 }
 
 
-void main() {
+void main() @safe {
     import std.stdio;
     import std.concurrency: spawn, send, receiveOnly, thisTid;
 

@@ -87,8 +87,8 @@ struct Shared(T) {
         }
     }
 
-    auto lock() shared @trusted {
-        _mutex.lock_nothrow;
+    auto lock() shared {
+        () @trusted { _mutex.lock_nothrow; }();
         return Guard(&_payload, _mutex);
     }
 }

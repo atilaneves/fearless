@@ -12,20 +12,27 @@ void main() @safe {
 
     {
         auto i = s.lock();
+
         // writeln is @system for some reason
         () @trusted { writeln("i: ", *i); }();
         *i = 33;
         () @trusted { writeln("i: ", *i); }();
 
+        // can't escape to a global
         static assert(!__traits(compiles, gEvil = i));
+
+        // ok to assign to a local
         int* intPtr;
         static assert(__traits(compiles, intPtr = i));
     }
 
-    auto tid = () @trusted { return spawn(&func, thisTid); }();
-    () @trusted { tid.send(&s); }();
-    () @trusted { receiveOnly!bool; }();
-    () @trusted { writeln("i: ", *s.lock); }();
+    // Demonstrate sending to another thread
+    () @trusted { // all the std.concurrency functions are @system
+        auto tid = spawn(&func, thisTid);
+        tid.send(&s);
+        receiveOnly!bool;
+        writeln("i: ", *s.lock);
+    }();
 }
 
 

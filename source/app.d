@@ -38,12 +38,14 @@ void func(Tid tid) @trusted { // Both receive and send are @system
 
 struct Shared(T) {
 
+    import core.sync.mutex: Mutex;
+
     private T _payload;
-    private Mutex _mutex;
+    private Mutex _mutex;  // see below why not core.sync.mutex.Mutex
 
     this(A...)(auto ref A args) shared {
         import std.functional: forward;
-        this._mutex = shared Mutex(null /*attr*/);
+        this._mutex = new shared Mutex;
         this._payload = T(forward!args);
     }
 
@@ -55,11 +57,13 @@ struct Shared(T) {
 
         alias payload this;
 
+        // I tried ref(T) as a return type here. That didn't compile.
+        // I can't remember why.
         scope T* payload() @trusted {
             return cast(T*) _payload;
         }
 
-        ~this() scope {
+        ~this() {
             _mutex.unlock_nothrow();
         }
     }
@@ -67,31 +71,5 @@ struct Shared(T) {
     auto lock() shared @trusted {
         _mutex.lock_nothrow;
         return Guard(&_payload, &_mutex);
-    }
-}
-
-// Can't use core.sync.mutex due to the member functions not being `scope`
-static struct Mutex {
-
-    import core.sys.posix.pthread;
-
-    private pthread_mutex_t _mutex;
-
-    @disable this();
-
-    this(pthread_mutexattr_t* attr) @trusted shared scope {
-        pthread_mutex_init(cast(pthread_mutex_t*)&_mutex, attr);
-    }
-
-    ~this() @trusted scope {
-        pthread_mutex_destroy(cast(pthread_mutex_t*)&_mutex);
-    }
-
-    void lock_nothrow() @trusted shared scope nothrow {
-        pthread_mutex_lock(cast(pthread_mutex_t*)&_mutex);
-    }
-
-    void unlock_nothrow() @trusted shared scope nothrow {
-        pthread_mutex_unlock(cast(pthread_mutex_t*)&_mutex);
     }
 }

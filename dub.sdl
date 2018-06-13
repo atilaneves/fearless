@@ -1,16 +1,28 @@
 name "fearless"
-description "D version of Rust's std::sync::Mutex"
+description "Safe concurrency for D"
 authors "Atila Neves"
 copyright "Copyright © 2018, Atila Neves"
 license "boost"
 dflags "-dip25" "-dip1000"
 
+
 configuration "default" {
     targetType "library"
-    excludedSourceFiles "source/example.d"
 }
+
 
 configuration "example" {
     targetType "executable"
     targetName "fearless-example"
+    sourceFiles "examples/example.d"
+}
+
+
+configuration "unittest" {
+    targetType "executable"
+    targetName "ut"
+    importPaths "tests"
+    sourcePaths "tests"
+    mainSourceFile "tests/ut_main.d"
+    dependency "unit-threaded" version="~>0.7.0"
 }

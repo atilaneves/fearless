@@ -1,5 +1,5 @@
 /**
-   D implementation of Rust's std::sync::Mutexmodule fearless.sharing;
+   D implementation of Rust's std::sync::Mutex
 */
 module fearless.sharing;
 

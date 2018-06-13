@@ -20,7 +20,7 @@ configuration "example" {
 
 configuration "unittest" {
     targetType "executable"
-    targetName "ut"
+    targetName "fearless-ut"
     importPaths "tests"
     sourcePaths "tests"
     mainSourceFile "tests/ut_main.d"

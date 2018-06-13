@@ -1,4 +1,4 @@
-D implementation of Rust's std::sync::Mutex
+Safe concurrency in D
 ====================================================
 
 This package tries to make using `shared` easier in D by locking and unlocking

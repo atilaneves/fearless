@@ -1,6 +1,16 @@
-name "caring"
+name "fearless"
 description "D version of Rust's std::sync::Mutex"
 authors "Atila Neves"
 copyright "Copyright © 2018, Atila Neves"
 license "boost"
 dflags "-dip25" "-dip1000"
+
+configuration "default" {
+    targetType "library"
+    excludedSourceFiles "source/example.d"
+}
+
+configuration "example" {
+    targetType "executable"
+    targetName "fearless-example"
+}

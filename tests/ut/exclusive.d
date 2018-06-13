@@ -9,3 +9,9 @@ import unit_threaded;
 @safe unittest {
     auto e = exclusive!int(42);
 }
+
+version(none)
+@("RC exclusive default allocator")
+@safe unittest {
+    auto e = rcExclusive!int(42);
+}

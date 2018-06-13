@@ -12,6 +12,16 @@ auto exclusive(T, A...)(auto ref A args) {
     return new shared Exclusive!T(args);
 }
 
+version(none) version(Have_automem) {
+    /**
+       A reference counted exclusive object (see above).
+    */
+    auto rcExclusive(T, A...)(auto ref A args) {
+        import automem.ref_counted: RefCounted;
+        return RefCounted!(Exclusive!T)(args);
+    }
+}
+
 
 /**
    Provides @safe exclusive access (via a mutex) to a payload of type T.

@@ -11,5 +11,4 @@ caring
 *.lib
 *.exe
 *.dylib
-fearless-example
-fearless-ut
+bin

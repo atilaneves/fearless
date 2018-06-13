@@ -14,13 +14,15 @@ configuration "default" {
 configuration "example" {
     targetType "executable"
     targetName "fearless-example"
+    targetPath "bin"
     sourceFiles "examples/example.d"
 }
 
 
 configuration "unittest" {
     targetType "executable"
-    targetName "fearless-ut"
+    targetName "ut"
+    targetPath "bin"
     importPaths "tests"
     sourcePaths "tests"
     mainSourceFile "tests/ut_main.d"

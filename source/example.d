@@ -9,7 +9,7 @@ void main() @safe {
     import std.stdio: writeln;
     import std.concurrency: spawn, send, receiveOnly, thisTid;
 
-    auto s = shared Shared!int(42);
+    auto s = exclusive!int(42);
 
     {
         auto i = s.lock();
@@ -32,7 +32,7 @@ void main() @safe {
         // Need to find a way here to stop sending it to another thread
         // in the same scope as .lock() to avoid deadlocks.
         auto tid = spawn(&func, thisTid);
-        tid.send(&s);
+        tid.send(s);
         receiveOnly!bool;
         writeln("i: ", *s.lock);
     }();
@@ -43,8 +43,8 @@ void func(Tid tid) @trusted { // Both receive and send are @system
     import std.concurrency: receive, send;
 
     receive(
-        // ref shared(Shared!int) didn't work
-        (shared(Shared!int)* m) {
+        // ref shared(Exclusive!int) didn't work
+        (shared(Exclusive!int)* m) {
             auto i = m.lock;
             *i = ++*i;
         },

@@ -20,7 +20,7 @@ auto spawn(F, A...)(F fn, auto ref A args) {
  */
 void send(A...)(Tid tid, auto ref A args) {
 
-    import fearless.sharing: Exclusive;
+    import fearless.sharing: ExclusiveImpl;
     import std.functional: forward;
     import std.concurrency: send_ = send;
     import std.traits: isInstanceOf, isPointer, PointerTarget;
@@ -32,7 +32,7 @@ void send(A...)(Tid tid, auto ref A args) {
 
         alias T = typeof(arg);
 
-        static if(isPointer!T && isInstanceOf!(Exclusive, PointerTarget!T)) {
+        static if(isPointer!T && isInstanceOf!(ExclusiveImpl, PointerTarget!T)) {
             if(arg.isLocked)
                 throw alreadyLockedException;
         }

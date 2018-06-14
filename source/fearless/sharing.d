@@ -9,7 +9,7 @@ module fearless.sharing;
    safe to pass to other threads.
  */
 auto gcExclusive(T, A...)(auto ref A args) {
-    return new shared Exclusive!T(args);
+    return new shared ExclusiveImpl!T(args);
 }
 
 /**
@@ -21,7 +21,7 @@ auto gcExclusive(T, A...)(auto ref A args) {
    that no references to it can be unsafely used.
  */
 auto gcExclusive(T)(ref T payload) {
-    return new shared Exclusive!T(payload);
+    return new shared ExclusiveImpl!T(payload);
 }
 
 version(none) version(Have_automem) {
@@ -30,16 +30,20 @@ version(none) version(Have_automem) {
     */
     auto rcExclusive(T, A...)(auto ref A args) {
         import automem.ref_counted: RefCounted;
-        return RefCounted!(Exclusive!T)(args);
+        return RefCounted!(ExclusiveImpl!T)(args);
     }
 }
 
+
+template Exclusive(T) {
+    alias Exclusive = shared(ExclusiveImpl!T);
+}
 
 /**
    Provides @safe exclusive access (via a mutex) to a payload of type T.
    Allows to share mutable data across threads safely.
  */
-struct Exclusive(T) {
+private struct ExclusiveImpl(T) {
 
     // TODO: make the mutex type a parameter
     import core.sync.mutex: Mutex;

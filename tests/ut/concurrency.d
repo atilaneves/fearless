@@ -19,7 +19,7 @@ private void threadFunc(Tid tid) {
             (Stop _) {
                 stop = true;
             },
-            (shared(Exclusive!int)* m) {
+            (Exclusive!int* m) {
                 auto i = m.lock;
                 ++i;
             },

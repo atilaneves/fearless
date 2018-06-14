@@ -39,7 +39,7 @@ void main() @safe {
 void func(Tid tid) @safe {
     receive(
         // ref shared(Exclusive!Foo) didn't work
-        (shared(Exclusive!Foo)* m) {
+        (Exclusive!Foo* m) {
             auto xfoo = m.lock;
             xfoo.i++;
         },

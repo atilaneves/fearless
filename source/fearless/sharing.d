@@ -12,6 +12,18 @@ auto exclusive(T, A...)(auto ref A args) {
     return new shared Exclusive!T(args);
 }
 
+/**
+   A new exclusive reference to a payload.
+   Allocated on the GC to make sure its lifetime is infinite and therefore
+   safe to pass to other threads.
+
+   This function sets the passed-in payload to payload.init to make sure
+   that no references to it can be unsafely used.
+ */
+auto exclusive(T)(ref T payload) {
+    return new shared Exclusive!T(payload);
+}
+
 version(none) version(Have_automem) {
     /**
        A reference counted exclusive object (see above).
@@ -44,8 +56,21 @@ struct Exclusive(T) {
      */
     private this(A...)(auto ref A args) shared {
         import std.functional: forward;
-        this._mutex = new shared Mutex;
         this._payload = T(forward!args);
+        init();
+    }
+
+    private this(ref T payload) shared {
+        import std.algorithm: move;
+        import std.traits: Unqual;
+        auto payloadPtr = () @trusted { return cast(Unqual!T*)&_payload; }();
+        move(payload, *payloadPtr);
+        payload = payload.init;
+        init();
+    }
+
+    private void init() shared {
+        this._mutex = new shared Mutex;
     }
 
     bool isLocked() shared const {

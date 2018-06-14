@@ -1,47 +1,55 @@
 import fearless;
 
+struct Ended{}
 
+struct Foo {
+    int i;
+}
+
+Foo* gEvilStruct;
 int* gEvilInt;
 
 
 void main() @safe {
 
-    auto s = gcExclusive!int(42);
+    auto foo = gcExclusive!Foo(42);
 
     {
-        auto i = s.lock();
+        auto xfoo = foo.lock();
 
-        safeWriteln("i: ", *i);
-        *i = 33;
-        safeWriteln("i: ", *i);
+        safeWriteln("i: ", xfoo.i);
+        xfoo.i = 1;
+        safeWriteln("i: ", xfoo.i);
 
         // can't escape to a global
-        static assert(!__traits(compiles, gEvilInt = i));
+        static assert(!__traits(compiles, gEvilStruct = xfoo));
+        static assert(!__traits(compiles, gEvilInt = &xfoo.i));
 
         // ok to assign to a local
+        Foo* fooPtr;
         int* intPtr;
-        static assert(__traits(compiles, intPtr = i));
+        static assert(__traits(compiles, fooPtr = xfoo));
+        static assert(__traits(compiles, intPtr = &xfoo.i));
     }
 
     // Demonstrate sending to another thread
     auto tid = spawn(&func, thisTid);
-    tid.send(s);
-    receiveOnly!bool;
-    safeWriteln("i: ", *s.lock);
+    tid.send(foo);
+    receiveOnly!Ended;
+    safeWriteln("i: ", foo.lock.i);
 }
 
 
 void func(Tid tid) @safe {
-
     receive(
-        // ref shared(GcExclusive!int) didn't work
-        (shared(Exclusive!int)* m) {
-            auto i = m.lock;
-            *i = ++*i;
+        // ref shared(Exclusive!Foo) didn't work
+        (shared(Exclusive!Foo)* m) {
+            auto xfoo = m.lock;
+            xfoo.i++;
         },
     );
 
-    tid.send(true);
+    tid.send(Ended());
 }
 
 void safeWriteln(A...)(auto ref A args) {

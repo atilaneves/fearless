@@ -63,9 +63,10 @@ struct Exclusive(T) {
     private this(ref T payload) shared {
         import std.algorithm: move;
         import std.traits: Unqual;
-        auto payloadPtr = () @trusted { return cast(Unqual!T*)&_payload; }();
-        move(payload, *payloadPtr);
+
+        _payload = () @trusted {  return cast(shared) move(payload); }();
         payload = payload.init;
+
         init();
     }
 

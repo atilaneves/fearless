@@ -8,7 +8,7 @@ module fearless.sharing;
    Allocated on the GC to make sure its lifetime is infinite and therefore
    safe to pass to other threads.
  */
-auto exclusive(T, A...)(auto ref A args) {
+auto gcExclusive(T, A...)(auto ref A args) {
     return new shared Exclusive!T(args);
 }
 
@@ -20,7 +20,7 @@ auto exclusive(T, A...)(auto ref A args) {
    This function sets the passed-in payload to payload.init to make sure
    that no references to it can be unsafely used.
  */
-auto exclusive(T)(ref T payload) {
+auto gcExclusive(T)(ref T payload) {
     return new shared Exclusive!T(payload);
 }
 

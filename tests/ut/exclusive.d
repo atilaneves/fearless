@@ -7,14 +7,14 @@ import unit_threaded;
 
 @("GC exclusive int")
 @safe unittest {
-    auto e = exclusive!int(42);
+    auto e = gcExclusive!int(42);
 }
 
 @("GC exclusive int moved payload")
 @safe unittest {
 
     int i = 42;
-    auto e = exclusive(i);
+    auto e = gcExclusive(i);
 
     // should be reset to T.init
     i.should == 0;
@@ -29,7 +29,7 @@ import unit_threaded;
 @safe unittest {
 
     auto ints = [1, 2, 3, 4];
-    auto e = exclusive(ints);
+    auto e = gcExclusive(ints);
 
     // should be reset to T.init
     ints.shouldBeEmpty;

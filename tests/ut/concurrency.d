@@ -32,7 +32,7 @@ private void threadFunc(Tid tid) {
 @("send works")
 @safe unittest {
     auto tid = spawn(&threadFunc, thisTid);
-    auto s = exclusive!int(42);
+    auto s = gcExclusive!int(42);
     tid.send(s);
     tid.send(Stop());
     receiveOnly!Ended;
@@ -42,7 +42,7 @@ private void threadFunc(Tid tid) {
 @("send fails when the mutex is already locked")
 @safe unittest {
     auto tid = spawn(&threadFunc, thisTid);
-    auto s = exclusive!int(42);
+    auto s = gcExclusive!int(42);
     {
         auto xs = s.lock;
         tid.send(s).shouldThrowWithMessage(

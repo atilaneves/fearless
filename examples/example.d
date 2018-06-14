@@ -8,7 +8,7 @@ void main() @safe {
     import std.stdio: writeln;
     import std.concurrency: spawn, send, receiveOnly, thisTid;
 
-    auto s = exclusive!int(42);
+    auto s = gcExclusive!int(42);
 
     {
         auto i = s.lock();
@@ -40,7 +40,7 @@ void func(Tid tid) @trusted { // Both receive and send are @system
     import std.concurrency: receive, send;
 
     receive(
-        // ref shared(Exclusive!int) didn't work
+        // ref shared(GcExclusive!int) didn't work
         (shared(Exclusive!int)* m) {
             auto i = m.lock;
             *i = ++*i;

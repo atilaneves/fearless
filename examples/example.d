@@ -1,25 +1,22 @@
 import fearless;
 
 
-int* gEvil;
+int* gEvilInt;
 
 
 void main() @safe {
-    import std.stdio: writeln;
-    import std.concurrency: spawn, send, receiveOnly, thisTid;
 
     auto s = gcExclusive!int(42);
 
     {
         auto i = s.lock();
 
-        // writeln is @system for some reason
-        () @trusted { writeln("i: ", *i); }();
+        safeWriteln("i: ", *i);
         *i = 33;
-        () @trusted { writeln("i: ", *i); }();
+        safeWriteln("i: ", *i);
 
         // can't escape to a global
-        static assert(!__traits(compiles, gEvil = i));
+        static assert(!__traits(compiles, gEvilInt = i));
 
         // ok to assign to a local
         int* intPtr;
@@ -27,17 +24,14 @@ void main() @safe {
     }
 
     // Demonstrate sending to another thread
-    () @trusted { // all the std.concurrency functions are @system
-        auto tid = spawn(&func, thisTid);
-        tid.send(s);
-        receiveOnly!bool;
-        writeln("i: ", *s.lock);
-    }();
+    auto tid = spawn(&func, thisTid);
+    tid.send(s);
+    receiveOnly!bool;
+    safeWriteln("i: ", *s.lock);
 }
 
 
-void func(Tid tid) @trusted { // Both receive and send are @system
-    import std.concurrency: receive, send;
+void func(Tid tid) @safe {
 
     receive(
         // ref shared(GcExclusive!int) didn't work
@@ -48,4 +42,10 @@ void func(Tid tid) @trusted { // Both receive and send are @system
     );
 
     tid.send(true);
+}
+
+void safeWriteln(A...)(auto ref A args) {
+    import std.stdio: writeln;
+    import std.functional: forward;
+    () @trusted { writeln(forward!args); }();
 }

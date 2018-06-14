@@ -41,6 +41,11 @@ void send(A...)(Tid tid, auto ref A args) {
     return () @trusted { send_(tid, forward!args); }();
 }
 
+void receive(T...)(auto ref T ops) {
+    import std.concurrency: receive_ = receive;
+    import std.functional: forward;
+    () @trusted { receive_(forward!ops); }();
+}
 
 auto receiveOnly(A...)() {
     import std.concurrency: receiveOnly_ = receiveOnly;

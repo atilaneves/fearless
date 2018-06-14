@@ -14,9 +14,30 @@ auto spawn(F, A...)(F fn, auto ref A args) {
 }
 
 
+/**
+   Wraps std.concurrency.send to make sure it's not possible to send
+   a fearless.sharing.Exclusive that is already locked to another thread.
+ */
 void send(A...)(Tid tid, auto ref A args) {
+
+    import fearless.sharing: Exclusive;
     import std.functional: forward;
     import std.concurrency: send_ = send;
+    import std.traits: isInstanceOf, isPointer, PointerTarget;
+
+    static immutable alreadyLockedException =
+        new Exception("Cannot send already locked Exclusive to another thread");
+
+    foreach(ref arg; args) {
+
+        alias T = typeof(arg);
+
+        static if(isPointer!T && isInstanceOf!(Exclusive, PointerTarget!T)) {
+            if(arg.isLocked)
+                throw alreadyLockedException;
+        }
+    }
+
     return () @trusted { send_(tid, forward!args); }();
 }
 

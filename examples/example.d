@@ -1,5 +1,4 @@
 import fearless;
-import std.concurrency: Tid;
 
 
 int* gEvil;
@@ -29,8 +28,6 @@ void main() @safe {
 
     // Demonstrate sending to another thread
     () @trusted { // all the std.concurrency functions are @system
-        // Need to find a way here to stop sending it to another thread
-        // in the same scope as .lock() to avoid deadlocks.
         auto tid = spawn(&func, thisTid);
         tid.send(s);
         receiveOnly!bool;

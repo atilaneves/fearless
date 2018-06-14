@@ -37,3 +37,18 @@ private void threadFunc(Tid tid) {
     tid.send(Stop());
     receiveOnly!Ended;
 }
+
+
+@("send fails when the mutex is already locked")
+@safe unittest {
+    auto tid = spawn(&threadFunc, thisTid);
+    auto s = exclusive!int(42);
+    {
+        auto xs = s.lock;
+        tid.send(s).shouldThrowWithMessage(
+            "Cannot send already locked Exclusive to another thread");
+    }
+
+    tid.send(Stop());
+    receiveOnly!Ended;
+}

@@ -34,6 +34,7 @@ struct Exclusive(T) {
 
     private T _payload;
     private Mutex _mutex;
+    private bool _locked;
 
     @disable this(this);
 
@@ -47,6 +48,10 @@ struct Exclusive(T) {
         this._payload = T(forward!args);
     }
 
+    bool isLocked() shared const {
+        return _locked;
+    }
+
     /**
        Obtain exclusive access to the payload. The mutex is locked and
        when the returned `Guard` object's lifetime is over the mutex
@@ -54,7 +59,8 @@ struct Exclusive(T) {
      */
     auto lock() shared {
         () @trusted { _mutex.lock_nothrow; }();
-        return Guard(&_payload, _mutex);
+        _locked = true;
+        return Guard(&_payload, _mutex, &_locked);
     }
 
     // non-static didn't work - weird error messages
@@ -62,6 +68,7 @@ struct Exclusive(T) {
 
         private shared T* _payload;
         private shared Mutex _mutex;
+        private shared bool* _locked;
 
         alias payload this;
 
@@ -73,6 +80,7 @@ struct Exclusive(T) {
 
         ~this() scope @trusted {
             _mutex.unlock_nothrow();
+            *_locked = false;
         }
     }
 }

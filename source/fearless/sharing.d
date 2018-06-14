@@ -96,12 +96,10 @@ struct Exclusive(T) {
         private shared Mutex _mutex;
         private shared bool* _locked;
 
-        alias payload this;
+        alias reference this;
 
-        // I tried ref(T) as a return type here. That didn't compile.
-        // I can't remember why.
-        scope T* payload() @trusted {
-            return cast(T*) _payload;
+        scope ref T reference() @trusted return {
+            return *(cast(T*) _payload);
         }
 
         ~this() scope @trusted {

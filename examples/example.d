@@ -6,7 +6,6 @@ struct Foo {
     int i;
 }
 
-Foo* gEvilStruct;
 int* gEvilInt;
 
 
@@ -22,13 +21,10 @@ void main() @safe {
         safeWriteln("i: ", xfoo.i);
 
         // can't escape to a global
-        static assert(!__traits(compiles, gEvilStruct = xfoo));
         static assert(!__traits(compiles, gEvilInt = &xfoo.i));
 
         // ok to assign to a local
-        Foo* fooPtr;
         int* intPtr;
-        static assert(__traits(compiles, fooPtr = xfoo));
         static assert(__traits(compiles, intPtr = &xfoo.i));
     }
 

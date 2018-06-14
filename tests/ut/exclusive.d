@@ -21,7 +21,7 @@ import unit_threaded;
 
     {
         auto p = e.lock;
-        (*p).should == 42;
+        p.reference.should == 42;
     }
 }
 
@@ -36,7 +36,7 @@ import unit_threaded;
 
     {
         auto p = e.lock;
-        (*p).should == [1, 2, 3, 4];
+        p.dup.should == [1, 2, 3, 4];
     }
 }
 

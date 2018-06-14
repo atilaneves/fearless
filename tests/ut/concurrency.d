@@ -21,7 +21,7 @@ private void threadFunc(Tid tid) {
             },
             (shared(Exclusive!int)* m) {
                 auto i = m.lock;
-                *i = ++*i;
+                ++i;
             },
         );
     }

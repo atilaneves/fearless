@@ -11,7 +11,8 @@ import fearless.from;
    safe to pass to other threads.
  */
 auto gcExclusive(T, A...)(auto ref A args) {
-    return new shared ExclusiveImpl!T(args);
+    import std.functional: forward;
+    return new shared ExclusiveImpl!T(forward!args);
 }
 
 /**
@@ -32,7 +33,8 @@ version(none) version(Have_automem) {
     */
     auto rcExclusive(T, A...)(auto ref A args) {
         import automem.ref_counted: RefCounted;
-        return RefCounted!(ExclusiveImpl!T)(args);
+        import std.functional: forward;
+        return RefCounted!(ExclusiveImpl!T)(forward!args);
     }
 }
 

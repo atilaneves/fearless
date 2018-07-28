@@ -35,9 +35,8 @@ version(none) version(Have_automem) {
 }
 
 
-template Exclusive(T) {
-    alias Exclusive = shared(ExclusiveImpl!T);
-}
+alias Exclusive(T) = shared(ExclusiveImpl!T);
+
 
 /**
    Provides @safe exclusive access (via a mutex) to a payload of type T.

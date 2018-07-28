@@ -3,6 +3,8 @@
 */
 module fearless.sharing;
 
+import fearless.from;
+
 /**
    A new exclusive reference to a payload of type T constructed from args.
    Allocated on the GC to make sure its lifetime is infinite and therefore
@@ -20,7 +22,7 @@ auto gcExclusive(T, A...)(auto ref A args) {
    This function sets the passed-in payload to payload.init to make sure
    that no references to it can be unsafely used.
  */
-auto gcExclusive(T)(ref T payload) {
+auto gcExclusive(T)(ref T payload) if(!from!"std.traits".hasUnsharedAliasing!T) {
     return new shared ExclusiveImpl!T(payload);
 }
 

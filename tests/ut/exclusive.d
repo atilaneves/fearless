@@ -25,21 +25,16 @@ import unit_threaded;
     }
 }
 
-@("GC exclusive int[] moved payload")
+@("GC exclusive struct with indirection moved payload")
 @safe unittest {
-
-    auto ints = [1, 2, 3, 4];
-    auto e = gcExclusive(ints);
-
-    // should be reset to T.init
-    ints.shouldBeEmpty;
-
-    {
-        auto p = e.lock;
-        p.dup.should == [1, 2, 3, 4];
+    struct Struct {
+        int[] ints;
     }
-}
 
+    auto s = Struct([1, 2, 3, 4]);
+    auto i = s.ints;
+    static assert(!__traits(compiles, gcExclusive(s)));
+}
 
 version(none)
 @("RC exclusive default allocator")

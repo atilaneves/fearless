@@ -43,7 +43,7 @@ template Exclusive(T) {
    Provides @safe exclusive access (via a mutex) to a payload of type T.
    Allows to share mutable data across threads safely.
  */
-private struct ExclusiveImpl(T) {
+package struct ExclusiveImpl(T) {
 
     // TODO: make the mutex type a parameter
     import core.sync.mutex: Mutex;

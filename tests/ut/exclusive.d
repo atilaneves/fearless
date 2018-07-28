@@ -10,18 +10,22 @@ import unit_threaded;
     auto e = gcExclusive!int(42);
 }
 
-@("GC exclusive int moved payload")
+@("GC exclusive struct moved payload")
 @safe unittest {
 
-    int i = 42;
-    auto e = gcExclusive(i);
+    static struct Foo {
+        int i;
+    }
+
+    auto foo = Foo(42);
+    auto e = gcExclusive(foo);
 
     // should be reset to T.init
-    i.should == 0;
+    foo.should == foo.init;
 
     {
         auto p = e.lock;
-        p.reference.should == 42;
+        p.reference.should == Foo(42);
     }
 }
 
@@ -36,8 +40,22 @@ import unit_threaded;
     static assert(!__traits(compiles, gcExclusive(s)));
 }
 
-version(none)
-@("RC exclusive default allocator")
-@safe unittest {
+@("RC exclusive int default allocator")
+@system unittest {
     auto e = rcExclusive!int(42);
+}
+
+@("RC exclusive struct default allocator")
+@system unittest {
+    static struct Foo {
+        int i;
+        double d;
+    }
+
+    auto e = rcExclusive!Foo(42, 33.3);
+    {
+        auto p = e.lock;
+        p.reference.i.should == 42;
+        p.reference.d.should ~ 33.3;
+    }
 }

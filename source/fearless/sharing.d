@@ -61,7 +61,7 @@ alias Exclusive(T) = shared(ExclusiveImpl!T);
    Provides @safe exclusive access (via a mutex) to a payload of type T.
    Allows to share mutable data across threads safely.
  */
-/*package*/ struct ExclusiveImpl(T) {
+package struct ExclusiveImpl(T) {
 
     import std.traits: hasUnsharedAliasing, isAggregateType;
 
@@ -84,6 +84,10 @@ alias Exclusive(T) = shared(ExclusiveImpl!T);
     }
 
     static if(isAggregateType!T && !hasUnsharedAliasing!T) {
+        /**
+           Take a payload by ref in the case that it's safe, and set the original
+           to T.init.
+         */
         private this(ref T payload) shared {
             import std.algorithm: move;
             import std.traits: Unqual;
@@ -99,6 +103,9 @@ alias Exclusive(T) = shared(ExclusiveImpl!T);
         this._mutex = new shared Mutex;
     }
 
+    /**
+       Whether or not the mutex is locked.
+     */
     bool isLocked() shared const {
         return _locked;
     }
@@ -130,39 +137,6 @@ alias Exclusive(T) = shared(ExclusiveImpl!T);
         ~this() scope @trusted {
             _mutex.unlock_nothrow();
             *_locked = false;
-        }
-    }
-}
-
-
-struct LeFooFoo(T) {
-
-    // TODO: make the mutex type a parameter
-    import core.sync.mutex: Mutex;
-
-    private T _payload;
-    private Mutex _mutex;
-    private bool _locked;
-
-    @disable this(this);
-
-    /**
-       The constructor is responsible for initialising the payload so that
-       it's not possible to escape it.
-     */
-    private this(A...)(auto ref A args) shared {
-        import std.functional: forward;
-        this._payload = T(forward!args);
-    }
-
-    import std.traits;
-    static if(isAggregateType!T) {
-        private this(ref T payload) shared {
-            import std.algorithm: move;
-            import std.traits: Unqual;
-
-            _payload = () @trusted { return cast(shared) move(payload); }();
-            payload = payload.init;
         }
     }
 }

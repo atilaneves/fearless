@@ -29,4 +29,5 @@ configuration "unittest" {
     dependency "unit-threaded" version="~>0.7.0"
     dependency "automem" version="~>0.3.0"
     dependency "test_allocator" version="~>0.2.1"
+    dependency "stdx-allocator" version="~>2.77.0"
 }

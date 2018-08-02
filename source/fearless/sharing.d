@@ -28,6 +28,7 @@ auto gcExclusive(T)(ref T payload) if(!from!"std.traits".hasUnsharedAliasing!T) 
 }
 
 version(Have_automem) {
+
     /**
        A reference counted exclusive object (see above).
     */
@@ -35,6 +36,20 @@ version(Have_automem) {
         import automem.ref_counted: RefCounted;
         import std.functional: forward;
         return RefCounted!(Exclusive!T)(forward!args);
+    }
+
+    auto rcExclusive(T, Allocator, Args...)(Allocator allocator, auto ref Args args)
+        if(from!"automem.traits".isAllocator!Allocator)
+    {
+        import automem.ref_counted: RefCounted;
+        import std.traits: hasMember;
+
+        enum isSingleton = hasMember!(Allocator, "instance");
+
+        static if(isSingleton)
+            return RefCounted!(Exclusive!T, Allocator)(args);
+        else
+            return RefCounted!(Exclusive!T, Allocator)(allocator, args);
     }
 }
 

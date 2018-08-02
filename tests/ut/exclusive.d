@@ -59,3 +59,40 @@ import unit_threaded;
         p.reference.d.should ~ 33.3;
     }
 }
+
+@("RC exclusive struct mallocator")
+@system unittest {
+
+    import stdx.allocator.mallocator: Mallocator;
+
+    static struct Foo {
+        int i;
+        double d;
+    }
+
+    auto e = rcExclusive!Foo(Mallocator.instance, 42, 33.3);
+    {
+        auto p = e.lock;
+        p.reference.i.should == 42;
+        p.reference.d.should ~ 33.3;
+    }
+}
+
+@("RC exclusive struct test allocator")
+@system unittest {
+
+    import test_allocator: TestAllocator;
+
+    static struct Foo {
+        int i;
+        double d;
+    }
+
+    auto allocator = TestAllocator();
+    auto e = rcExclusive!Foo(&allocator, 42, 33.3);
+    {
+        auto p = e.lock;
+        p.reference.i.should == 42;
+        p.reference.d.should ~ 33.3;
+    }
+}

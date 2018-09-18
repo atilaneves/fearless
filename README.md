@@ -8,11 +8,11 @@ Safe concurrency in D
 This package implements `@safe` easy sharing of mutable data between threads without having
 to cast from shared and lock/unlock a mutex. It does so by using `scope` and
 [DIP1000](https://github.com/dlang/DIPs/blob/master/DIPs/DIP1000.md). It was inspired by
-Rusts's [std::sync::Mutex](https://doc.rust-lang.org/1.21.0/std/sync/struct.Mutex.html).
+Rust's [std::sync::Mutex](https://doc.rust-lang.org/1.21.0/std/sync/struct.Mutex.html).
 
 The main type is `Exclusive!T` which is safely shareable between
 threads even if T is not `immutable` or `shared`. To create one, call
-of one `gcExclusive` or `rcExclusive` with the parameters to the
+one of `gcExclusive` or `rcExclusive` with the parameters to the
 constructor to create a type T. Passing an already created T would not
 be safe since references to it or its internal data might exist
 elsewhere.
@@ -22,8 +22,9 @@ As the names indicate, `gcExclusive` allocates on the GC heap, whereas `rcExclus
 available at compile-time if the client code defines `Have_automem`, which is automatically
 done by dub if automem is listed as a dependency.
 
-To actually get access to the protected value, use `.lock()` to get exclusive access for the
-current block of code.
+To actually get access to the protected value, use `.lock()` (`borrow`
+exists as an alias) to get exclusive access for the current block of
+code.
 
 An example (notice that `main` is `@safe`):
 

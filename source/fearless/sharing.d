@@ -27,7 +27,7 @@ auto gcExclusive(T)(ref T payload) if(!from!"std.traits".hasUnsharedAliasing!T) 
     return new Exclusive!T(payload);
 }
 
-version(Have_automem) {
+static if (is(typeof({import automem.ref_counted;}))) {
 
     /**
        A reference counted exclusive object (see above).

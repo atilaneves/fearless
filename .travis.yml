@@ -3,7 +3,10 @@ sudo: false
 
 matrix:
     include:
+        - d: dmd-2.082.0
+        - d: dmd-2.081.2
         - d: dmd-2.080.1
+        - d: ldc-1.11.0
 
 script:
   - dub test --build=unittest-cov --compiler=${DC}

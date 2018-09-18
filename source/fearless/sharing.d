@@ -121,6 +121,8 @@ package struct ExclusiveImpl(T) {
         return Guard(&_payload, _mutex, &_locked);
     }
 
+    alias borrow = lock;
+
     // non-static didn't work - weird error messages
     static struct Guard {
 
@@ -130,7 +132,7 @@ package struct ExclusiveImpl(T) {
 
         alias reference this;
 
-        scope ref T reference() @trusted return {
+        ref T reference() @trusted return scope {
             return *(cast(T*) _payload);
         }
 

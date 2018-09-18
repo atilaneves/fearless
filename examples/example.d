@@ -12,7 +12,7 @@ void main() @safe {
 
     // create an instance of Exclusive!Foo allocated on the GC heap
     auto foo = gcExclusive!Foo(42);
-    // from now the value inside `foo` can only be used by calling `lock`
+    // from now the value inside `foo` can only be used by calling `lock` (a.k.a. `borrow`)
 
     {
         int* oldIntPtr;

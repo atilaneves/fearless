@@ -46,7 +46,7 @@ void main() @safe {
     // from now the value inside `foo` can only be used by calling `lock`
 
     {
-        int* oldIntPtr;
+        int* oldIntPtr;  // only here to demonstrate scopes, see below
         auto xfoo = foo.lock();  // get exclusive access to the data (this locks a mutex)
 
         safeWriteln("i: ", xfoo.i);

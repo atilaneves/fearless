@@ -18,9 +18,9 @@ be safe since references to it or its internal data might exist
 elsewhere.
 
 As the names indicate, `gcExclusive` allocates on the GC heap, whereas `rcExclusive` uses
-`RefCounted` from [automem](https://github.com/atilaneves/automem). This is optional and only
-available at compile-time if the client code defines `Have_automem`, which is automatically
-done by dub if automem is listed as a dependency.
+`RefCounted` from [automem](https://github.com/atilaneves/automem). This works automatically
+if automem can be imported, which is always the case when automem is listed as a DUB
+dependency.
 
 To actually get access to the protected value, use `.lock()` (`borrow`
 exists as an alias) to get exclusive access for the current block of

@@ -137,8 +137,8 @@ package struct ExclusiveImpl(T) {
         }
 
         ~this() scope @trusted {
-            _mutex.unlock_nothrow();
             *_locked = false;
+            _mutex.unlock_nothrow();
         }
     }
 }

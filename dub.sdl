@@ -26,8 +26,8 @@ configuration "unittest" {
     importPaths "tests"
     sourcePaths "tests"
     mainSourceFile "tests/ut_main.d"
-    dependency "unit-threaded" version="~>0.7.0"
-    dependency "automem" version="~>0.3.0"
-    dependency "test_allocator" version="~>0.2.1"
+    dependency "unit-threaded" version="*"
+    dependency "automem" version="*"
+    dependency "test_allocator" version="*"
     dependency "stdx-allocator" version="~>2.77.0"
 }

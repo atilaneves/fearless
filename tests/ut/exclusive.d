@@ -63,7 +63,7 @@ import unit_threaded;
 @("RC exclusive struct mallocator")
 @system unittest {
 
-    import stdx.allocator.mallocator: Mallocator;
+    import std.experimental.allocator.mallocator: Mallocator;
 
     static struct Foo {
         int i;

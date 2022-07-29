@@ -77,7 +77,7 @@ package struct ExclusiveImpl(T) {
        The constructor is responsible for initialising the payload so that
        it's not possible to escape it.
      */
-    private this(A...)(auto ref A args) shared {
+    this(A...)(auto ref A args) shared {
         import std.functional: forward;
         this._payload = T(forward!args);
         init();

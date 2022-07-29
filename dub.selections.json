@@ -1,9 +1,8 @@
 {
 	"fileVersion": 1,
 	"versions": {
-		"automem": "0.4.4",
-		"stdx-allocator": "2.77.5",
-		"test_allocator": "0.2.5",
-		"unit-threaded": "0.7.53"
+		"automem": "0.6.7",
+		"test_allocator": "0.3.3",
+		"unit-threaded": "2.0.5"
 	}
 }

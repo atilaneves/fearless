@@ -16,7 +16,7 @@ void main() @safe {
 
     {
         int* oldIntPtr; // only here to demostrate scopes, see below
-        auto xfoo = foo.lock();  // get exclusive access to the data (this locks a mutex)
+        scope xfoo = foo.lock();  // get exclusive access to the data (this locks a mutex)
 
         safeWriteln("i: ", xfoo.i);
         xfoo.i = 1;

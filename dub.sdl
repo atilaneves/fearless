@@ -3,7 +3,7 @@ description "Safe concurrency for D"
 authors "Atila Neves"
 copyright "Copyright © 2018, Atila Neves"
 license "boost"
-dflags "-dip25" "-dip1000"
+dflags "-preview=dip25" "-preview=dip1000"
 
 
 configuration "default" {
@@ -29,5 +29,4 @@ configuration "unittest" {
     dependency "unit-threaded" version="*"
     dependency "automem" version="*"
     dependency "test_allocator" version="*"
-    dependency "stdx-allocator" version="~>2.77.0"
 }

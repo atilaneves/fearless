@@ -51,6 +51,8 @@ static if (is(typeof({import automem.ref_counted;}))) {
         else
             return RefCounted!(Exclusive!T, Allocator)(allocator, args);
     }
+}else{
+    pragma(msg, "automem not found, rcExclusive will not be available.");
 }
 
 

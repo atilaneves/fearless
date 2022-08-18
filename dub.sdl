@@ -5,11 +5,13 @@ copyright "Copyright © 2018, Atila Neves"
 license "boost"
 dflags "-preview=dip25" "-preview=dip1000"
 
+dependency "unit-threaded" version="*"
+dependency "automem" version="*"
+dependency "test_allocator" version="*"
 
 configuration "default" {
     targetType "library"
 }
-
 
 configuration "example" {
     targetType "executable"
@@ -26,7 +28,4 @@ configuration "unittest" {
     importPaths "tests"
     sourcePaths "tests"
     mainSourceFile "tests/ut_main.d"
-    dependency "unit-threaded" version="*"
-    dependency "automem" version="*"
-    dependency "test_allocator" version="*"
 }

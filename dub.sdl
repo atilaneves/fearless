@@ -5,27 +5,27 @@ copyright "Copyright © 2018, Atila Neves"
 license "boost"
 dflags "-preview=dip25" "-preview=dip1000"
 
-dependency "unit-threaded" version="*"
-dependency "automem" version="*"
-dependency "test_allocator" version="*"
+dependency "ichor-lib" version="*"
 
 configuration "default" {
-    targetType "library"
+	targetType "library"
 }
 
 configuration "example" {
-    targetType "executable"
-    targetName "fearless-example"
-    targetPath "bin"
-    sourceFiles "examples/example.d"
+	targetType "executable"
+	targetName "fearless-example"
+	targetPath "bin"
+	sourceFiles "examples/example.d"
 }
 
 
 configuration "unittest" {
-    targetType "executable"
-    targetName "ut"
-    targetPath "bin"
-    importPaths "tests"
-    sourcePaths "tests"
-    mainSourceFile "tests/ut_main.d"
+	dependency "unit-threaded" version="*"
+	dependency "test_allocator" version="*"
+	targetType "executable"
+	targetName "ut"
+	targetPath "bin"
+	importPaths "tests"
+	sourcePaths "tests"
+	mainSourceFile "tests/ut_main.d"
 }

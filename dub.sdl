@@ -3,7 +3,7 @@ description "Safe concurrency for D"
 authors "Atila Neves"
 copyright "Copyright © 2018, Atila Neves"
 license "boost"
-dflags "-preview=dip25" "-preview=dip1000"
+dflags "-preview=dip1000"
 
 
 configuration "default" {

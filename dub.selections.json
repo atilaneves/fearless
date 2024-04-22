@@ -3,6 +3,6 @@
 	"versions": {
 		"automem": "0.6.9",
 		"test_allocator": "0.3.4",
-		"unit-threaded": "2.1.6"
+		"unit-threaded": "2.1.9"
 	}
 }
